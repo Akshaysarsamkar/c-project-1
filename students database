@@ -1,0 +1,166 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct info {
+  char name[30], adds[30], vil[20], class[10];
+  int id, pno;
+  float per;
+};
+
+void addstudent() {
+  struct info s;
+  FILE *fp;
+  int ch;
+  do {
+
+    printf("\n\n\t\t\t\tADD STUDENT\n");
+    fp = fopen("info", "a");
+    printf("  \t\t______________________________\n");
+    printf("\n\t\tEnter the student name:");
+    scanf("%s", s.name);
+
+    printf("\n\t\tEnter the student Id:");
+    scanf("%d", &s.id);
+
+    printf("\n\t\tEnter the student adds:");
+    scanf("%s", s.adds);
+
+    printf("\n\t\tEnter the student village:");
+    scanf("%s", s.vil);
+
+    printf("\n\t\tEnter the student phone no:");
+    scanf("%d", &s.pno);
+
+    printf("\n\t\tEnter the student class:");
+    scanf("%s", s.class);
+
+    printf("\n\t\tEnter the student percentage:");
+    scanf("%f", &s.per);
+
+    fwrite(&s, sizeof(struct info), 1, fp);
+    fclose(fp);
+
+    printf("\n\t\tadd another student info:");
+    scanf("%d", &ch);
+
+  } while (ch == 1);
+}
+
+void studentrecord() {
+  struct info s;
+  FILE *fp;
+  fp = fopen("info", "r");
+  if (fp == NULL) {
+    fprintf(stderr, "file is empty! \n");
+  } else {
+    printf("\n\t\t\t   STUDENT RECORDS\n");
+    printf("  \t\t______________________________\n");
+  }
+  while (fread(&s, sizeof(struct info), 1, fp)) {
+    printf("\n\t\tSTUDENT NAME IS       : %s\n", s.name);
+    printf("\n\t\tSTUDENT ID IS         : %d\n", s.id);
+    printf("\n\t\tSTUDENT VILLAGE IS    : %s\n", s.vil);
+    printf("\n\t\tSTUDENT ADDRESS IS    : %s\n", s.adds);
+    printf("\n\t\tSTUDENT CLASS IS      : %s\n", s.class);
+    printf("\n\t\tSTUDENT PHONE NO IS   : %d\n", s.pno);
+
+    printf("\n\t\tSTUDENT PERCENTAGE IS : %f\n", s.per);
+    printf("  \t\t______________________________\n");
+  }
+  fclose(fp);
+}
+
+void searchstudent() {
+  FILE *fp;
+  int rollno, found = 0;
+  struct info s;
+  fp = fopen("info", "r");
+
+  printf("\n\t\t\t   SEARCH STUDENT\n");
+  printf("  \t\t______________________________\n");
+  printf("\n\t\t\tENTER THE ROLL NO:");
+  scanf("%d", &rollno);
+  while (fread(&s, sizeof(struct info), 1, fp) > 0) {
+
+    if (s.id == rollno) {
+      found = 1;
+      printf("\n\t\tSTUDENT NAME IS       : %s\n", s.name);
+      printf("\n\t\tSTUDENT ID IS         : %d\n", s.id);
+      printf("\n\t\tSTUDENT VILLAGE IS    : %s\n", s.vil);
+      printf("\n\t\tSTUDENT ADDRESS IS    : %s\n", s.adds);
+      printf("\n\t\tSTUDENT CLASS IS      : %s\n", s.class);
+      printf("\n\t\tSTUDENT PHONE NO IS   : %d\n", s.pno);
+
+      printf("\n\t\tSTUDENT PERCENTAGE IS : %f\n", s.per);
+    }
+  }
+  if (!found) {
+    printf("\n\t\t\tRECORD NOT FOUND\n");
+  }
+}
+
+void deletestudent() {
+  struct info s;
+  FILE *fp, *fp1;
+  int found = 0, rollno;
+
+  printf("\n\t\t\tDELETE STUDENT RECORD\n");
+  fp = fopen("info", "r");
+  fp1 = fopen("temp", "w");
+
+  printf("  \t\t______________________________\n");
+  printf("\n\t\t\tENTER THE ROLL NO:");
+  scanf("%d", &rollno);
+
+  if (fp == NULL) {
+    fprintf(stderr, "FILE IS EMPTY");
+    exit(0);
+  }
+  while (fread(&s, sizeof(struct info), 1, fp)) {
+    if (s.id == rollno) {
+      found = 1;
+    } else {
+      fwrite(&s, sizeof(struct info), 1, fp1);
+    }
+  }
+  fclose(fp);
+  fclose(fp1);
+
+if(!found) 
+{
+  printf("\n\t\t\tRECORD NOT FOUND\n");
+}
+  if(found) 
+  {
+    remove("info");
+    rename("temp","info");
+    printf("\t\t\tDELETE SUCCESSFUL\n");
+  }
+
+
+}
+
+void main() {
+  int ch;
+  printf("\t\t\t  STUDENT DATABASE\n\n");
+  do {
+    printf("  \t\t______________________________\n");
+    printf("\n\t\t\t1:ADD STUDENT\n");
+    printf("\n  \t\t\t2:STUDENT RECORDS\n");
+    printf("\n  \t\t\t3:DELETE STUDENT RECORD\n");
+    printf("\n  \t\t\t4:SEARCH STUDENT\n");
+    printf("\n  \t\t\t5:EXIT\n");
+
+    printf("\n\t\t\tENTER YOUR CHOICE :");
+    scanf("%d", &ch);
+    if (ch == 1) {
+      addstudent();
+    } else if (ch == 2) {
+      studentrecord();
+    } else if (ch == 3) {
+      deletestudent();
+    } else if (ch == 4) {
+      searchstudent();
+    }
+
+  } while (ch != 5);
+}
